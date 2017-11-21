@@ -1,0 +1,2 @@
+yumdownloader mesos --destdir /RESOURCE/MESOS/RPM --resolve
+

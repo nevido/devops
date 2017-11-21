@@ -1,0 +1,17 @@
+# systemctl something command when you type
+
+if you can see the next error msg 
+"Failed to get D-Bus connection: Operation not permitted"
+
+
+try like this
+
+docker run --privileged -d --name mycent7 centos:7 init
+docker exec -it mycent7 bash
+
+or
+
+docker exec -it $(docker run --privileged -d centos:7 init) bash
+
+
+

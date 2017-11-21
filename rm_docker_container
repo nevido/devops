@@ -1,0 +1,3 @@
+docker rm $(docker ps -a |grep Create |awk '{print $1}')
+docker rm $(docker ps -a -f STATUS=exited | awk '{print $1}')
+

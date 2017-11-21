@@ -1,0 +1,8 @@
+download scope from web to /usr/local/bin
+chmod a+x /usr/local/bin/scope
+
+if you have 3 node then copy scope to all systems /usr/local/bin/scope
+and then execute below command all(3 node) systems
+
+scope launch server-ip 2server-ip 3serer-ip
+

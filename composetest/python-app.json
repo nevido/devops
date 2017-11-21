@@ -1,0 +1,21 @@
+{
+ "id": "python-app",
+ "container": {
+  "type": "DOCKER",
+  "docker": {
+   "image": "spidertutorial/python-web",
+   "network": "BRIDGE",
+   "portMappings": [
+     { "hostPort": 0, "containerPort" : 5000, "servicePort":10005 }
+    ],
+   "forcePullImage" : true
+    }
+   },
+ "instances" : 1,
+ "cpus" : 0.5,
+ "mem": 128,
+ "healthChecks": [],
+ "labels": {
+   "HAPROXY_GROUP": "external"
+ }
+}

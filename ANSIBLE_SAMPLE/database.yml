@@ -1,0 +1,32 @@
+- hosts: centos3
+
+  remote_user: root
+  tasks:
+   - name: Ensure that MariaDB
+     yum: name='{{item}}' state=present
+     with_items:
+      - mariadb-server
+      - MySQL-python
+   - name: Ensure that Mariadb is started and enabled
+     service: name=mariadb state=started enabled=yes
+   - name: Set the root password for Mysql
+     mysql_user:
+       name: root
+       password: admin
+       state: present
+   - name: Upload the .my.cnf file to save credentials
+     copy:
+       src: my.cnf
+       dest: /root/.my.cnf
+       owner: root
+       mode: 0600
+~
+
+
+
+########## vi my.cnf ######
+[client]
+user=root
+password=admin
+
+

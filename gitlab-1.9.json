@@ -1,0 +1,45 @@
+{
+  "id": "gitlab-runner-docker",
+  "container": {
+    "type": "DOCKER",
+    "docker": {
+      "image": "hydocrepo.io:12000/dcos-gitlab-runner-service:v9.1.1",
+      "network": "HOST",
+      "privileged": true
+    }
+  },
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 500,
+  "env": {
+  },
+  "portMappings": [
+    {
+      "servicePort": 1111
+    }
+   ]
+  }
+  "volume": [
+ {
+ "containerPath": "/var/run/docker.sock",
+ "hostPath": "/var.run/docker.sock",
+ "mode" : "RW"
+ }
+ ],
+  "taskKillGracePeriodSeconds": 15,
+  "healthChecks": [
+     {
+        "path": "/metrics",
+        "portIndex": 0,
+        "protocol": "HTTP",
+        "gracePeriodSeconds": 300,
+        "intervalSeconds": 60,
+        "timeoutSeconds": 20,
+        "maxConsecutiveFailures": 3,
+        "ignoreHttp1xx": false
+      }
+  ],
+ "labels": {
+  "HAPROXY_GROUP": "external"
+  }
+}

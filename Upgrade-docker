@@ -1,0 +1,60 @@
+Upgrade from the same major version
+
+Use these instructions if youre upgrading your CS Docker Engine within the same major version. As an example, from 1.1.x to 1.2.x.
+
+CentOS 7.1 & RHEL 7.0/7.1
+
+Use these instructions to upgrade YUM-based systems.
+
+1.Add the Docker Engine repository.
+
+$ sudo yum-config-manager --add-repo https://packages.docker.com/1.12/yum/repo/main/centos/7
+
+
+This adds the repository of the latest version of CS Docker Engine. You can customize the URL to install other versions.
+
+
+2.Install the new package:
+
+$ sudo yum update docker-engine
+
+
+
+3.Check that the CS Engine is running:
+
+$ sudo docker info
+
+
+
+Ubuntu 14.04 LTS
+
+Use these instructions to update APT-based systems.
+
+1.Add the docker engine repository.
+
+$ echo "deb https://packages.docker.com/1.12/apt/repo ubuntu-trusty main" | sudo tee /etc/apt/sources.list.d/docker.list
+
+
+This adds the repository of the latest version of CS Docker Engine for the Ubuntu Trusty distribution. Change the ubuntu-trusty string to the distribution youre using:
+.debian-jessie (Debian 8)
+.debian-stretch (future release)
+.debian-wheezy (Debian 7)
+.ubuntu-precise (Ubuntu 12.04)
+.ubuntu-trusty (Ubuntu 14.04)
+.ubuntu-utopic (Ubuntu 14.10)
+.ubuntu-vivid (Ubuntu 15.04)
+.ubuntu-wily (Ubuntu 15.10)
+
+
+2.Update your docker-engine package.
+
+$ sudo apt-get update && sudo apt-get upgrade docker-engine
+
+
+
+3.Check that the CS Engine is running:
+
+$ sudo docker info
+
+
+

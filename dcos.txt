@@ -1,0 +1,154 @@
+
+try to read internet install guide
+
+(1) install some packages on the internet guild of dcos
+(2) make ssl
+  (server) ssh-keygen -t rsa [enter]
+  (client) ssh-keygen -t rsa [enter]
+   from server's id_rsa.pub to client's authorized_keys (/root/.ssh)
+  (P.S server's authorized_keys = id_rsa.pub)
+  server# ssh client-hostname  [ conecct with password then ok]
+
+
+(3) in genconf directory's ip-detech file check (important)
+
+#!/usr/bin/env bash
+set -o nounset -o errexit
+export PATH=/usr/sbin:/usr/bin:$PATH
+echo $(ip addr show ens32 | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+
+
+
+normally ens32 is your local network driver (normally eth0 but your system is vm then check it. i'm using ens32)
+
+
+
+if you want to reinstall
+then remove  slave node's /opt/mesos and dcos and etc
+/var/lib/docs and mesos
+
+/etc/systemd/system/dcos *
+
+
+if you can see the port error (already use the port) then kill the port
+
+# port check   
+netstat -nap |grep port
+(ex: netstat -nap |grep 109)
+#check using program of special port
+lsof -i TCP:port
+(ex:lsof -i TCP:1099)
+
+#port kill
+fuser -k -n tcp port
+(Ex: fuser -k -n tcp 1099)
+
+
+install steup [preflight - deploy - postflight]
+
+if you can reach for the some error at postflight 
+such as endpoints_*.json not found file or 
+can't start service of Metronome and Navstar 
+then the reason is time
+
+if you system is on the internet possible then 
+yum install chrony (all systems)
+systemctl start chronyd
+systemctl enable chronyd
+
+and retry (postflight)
+
+or not (not to connect internet site )
+
+setup ntp server (on your server)
+## ntp server setup
+vi /etc/ntp.conf
+
+modify file
+
+restrict default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1
+# local clock
+server 127.127.1.0
+fudge 127.127.1.0 stratum 10
+
+# ps 127.127.1.0 is your local system time
+
+systemctl start ntpd
+systemctl enable ntpd
+
+
+## ntp client
+
+vi /etc/ntp.conf
+
+server ntp-server-ip
+(ex: server 192.168.0.10)
+
+
+systemctl start ntpd
+systemctl enable ntpd
+
+
+## checking ntpd sync
+ntpq -p
+
+
+
+and then retry postflight 
+
+
+## INSTALL DC/OS CLI
+ 
+u want to use dcos command then have to be installed on your system (master)
+
+recommand install guide
+
+and  master server -> slave are able to connect without password(SSH)
+cat id_rsa.pub | ssh remote-user@remote-host "cat >>~/.ssh/authorized_keys"
+(example[master]: cat id_rsa.pub | ssh root@slaveserver "cat >>~/.ssh/authorized_keys"
+
+FROM master server command 
+#dcos node ssh --master-proxy --user=root --mesos-id=master:199's agent id 
+
+if you can see the agent error msg 'ssh-agent not running or etc'
+then 
+# exec ssh-agent /usr/bin/bash
+vi /etc/rc3.d/S77sshtest
+#!/bin/bash
+/usr/local/bin/ssh-test.sh
+
+chmod +x /etc/rc3.d/S77sshtest
+
+vi /usr/local/bin/ssh-test.sh
+exec ssh-agent /usr/bin/bash
+
+chmod +x ssh-test.sh
+
+
+and retry # if passwd request again and again then insert master's password
+
+
+
+
+
+#master server  CLI
+
+
+
+
+
+if you can't start dcos-mesos-slave.service 
+
+then 
+journalctl -xe
+
+
+if you can see the port error
+then fuser -k -n tcp port
+
+systemctl start dcos-mesos-slave.service
+systemctl status dcos-mesos-slave.service
+
+
+

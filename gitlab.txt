@@ -1,0 +1,83 @@
+
+https://developer.ibm.com/code/2017/07/13/step-step-guide-running-gitlab-ce-docker/
+
+
+## SINGLE CONTAINER
+$ sudo docker run --detach --name gitlab \
+	--hostname gitlab.example.com \
+	--publish 30080:30080 \
+         --publish 30022:22 \
+	--env GITLAB_OMNIBUS_CONFIG="external_url 'http://gitlab.example.com:30080'; gitlab_rails['gitlab_shell_ssh_port']=30022;" \
+	gitlab/gitlab-ce:9.1.0-ce.0
+
+
+## Multiple-cONTAINER VIA DOCKER COMPOSE
+
+(1) Redis
+Gitlab CE uses Redis to store user sessions and a task queue. In production, you would want it to be a bit more resilient than we show here, but for the most part, the data stored in Redis is not critical, so were opting to not persist any data for it for this demo. So its entry in our docker-compose manifest is fairly simple:
+
+redis:
+  restart: always
+image: redis:3.0.7-alpine
+
+
+(2) PostgreSQL
+GitLab CE uses PostgreSQL as its database back end, where it stores users, Git repo information, and more. In a production environment, you would want this database to persist its data on a persistent data store and perform backups (and perhaps even database replication). In our docker-compose manifest, we have the option to persist the data to the local machines disks by uncommenting out the volumes: section. You can also see where we specify the username, password, and database name to be created for GitLab to use:
+
+
+
+postgresql:
+  restart: always
+  image: postgres:9.6.2-alpine
+  environment:
+	- POSTGRES_USER=gitlab
+	- POSTGRES_PASSWORD=gitlab
+	- POSTGRES_DB=gitlabhq_production
+# the following are hints on what volumes to mount if you want to persist data
+#  volumes:
+#	- data/postgresql:/var/lib/postgresql:rw
+
+
+(3) GitLab CE
+Finally, we have the GitLab image itself. This is the same image we used above for the plain Docker example, except were setting a few more configuration settings to tell it how to connect to Redis and Postgres. Like in the Docker example, we are setting the hostname and port settings. However, we are also setting GitLab configuration settings to tell it to disable its own internal Postgres/Redis services and instead are passing in the configuration options to use the external containers and using Docker links to make the GitLab container aware of the other two by name. Like the Postgres example above, you can uncomment out the volumes section to persist the data locally:
+
+gitlab:
+  image: 'gitlab/gitlab-ce:9.1.0-ce.0'
+  restart: always
+  hostname: 'gitlab.example.com'
+  links:
+	- postgresql:postgresql
+	- redis:redis
+  environment:
+	GITLAB_OMNIBUS_CONFIG: |
+  	postgresql['enable'] = false
+  	gitlab_rails['db_username'] = "gitlab"
+  	gitlab_rails['db_password'] = "gitlab"
+  	gitlab_rails['db_host'] = "postgresql"
+  	gitlab_rails['db_port'] = "5432"
+  	gitlab_rails['db_database'] = "gitlabhq_production"
+  	gitlab_rails['db_adapter'] = 'postgresql'
+  	gitlab_rails['db_encoding'] = 'utf8'
+  	redis['enable'] = false
+  	gitlab_rails['redis_host'] = 'redis'
+  	gitlab_rails['redis_port'] = '6379'
+  	external_url 'http://gitlab.example.com:30080'
+  	gitlab_rails['gitlab_shell_ssh_port'] = 30022
+  ports:
+# both ports must match the port from external_url above
+	- "30080:30080"
+# the mapped port must match ssh_port specified above.
+	- "30022:22"
+# the following are hints on what volumes to mount if you want to persist data
+#  volumes:
+#	- data/gitlab/config:/etc/gitlab:rw
+#	- data/gitlab/logs:/var/log/gitlab:rw
+#	- data/gitlab/data:/var/opt/gitlab:rw
+
+###. Using GitLab CE
+In both deployment scenarios above, we set our GitLab CE hostname to gitlab.example.com. The first thing well do is update our local DNS to use that URL. In Linux or OSX, this can be done by adding the following to your /etc/hosts file:
+
+127.0.0.1 gitlab.example.com
+Note: If your DOCKER_HOST is not localhost, you will want to replace 127.0.0.1 with the IP of your docker host. 
+
+With this set and GitLab CE running from either of the above scenarios, you should be able to access GitLab at http://gitlab.example.com:30080. You should see the following screen. The first time you access your GitLab CE install, it will prompt you to change your password. This is for your admin user with the username root. Set a password and click the Chang

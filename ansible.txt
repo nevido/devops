@@ -1,0 +1,159 @@
+
+ansible yum package download
+
+yum install epel_release -y 
+yum install -y ansible
+
+[it's impolssible in my local repo]
+
+ping test
+vi /etc/ansible/hosts 
+ insert ip and hostname to connect hosts
+
+#ansible all -m ping -k 
+[ssh key change]
+
+config files
+/etc/ansible/ansible.cfg
+
+/etc/ansible/hosts
+vi /etc/ansible/hosts
+[nginx]
+10.158.122.x
+10.158.122.x
+10.158.122.x
+
+nginx is ip of underline's group
+if you want to call all ip then just you can call nginx 
+
+ansible options
+-i (--inventory-file) about hosts's files
+-m (--module-name)
+-k(--ask-pass) ask password 
+-K(--ask-beocome-pass) form soome to admin(user's permission upgrade to admin)
+--list-hosts: member hosts's check
+
+example) vi test
+10.158.122.190
+166.125.97.224
+
+#ansible all -i test -m ping -k
+if you need ping test some host (not /etc/ansible/hosts)
+
+#ansible nginx -m ping -k
+ 
+ping to [nginx] memnbers
+
+#ansible nginx -m ping --list-hosts
+hosts (3):
+    10.158.122.190
+    166.125.97.224
+    166.125.97.225
+
+#ansible all -i test -m ping --list-hosts
+  hosts (2):
+    10.158.122.190
+    166.125.97.224
+
+
+## ansible test
+1. uptime check
+ ansible all -m shell -a "uptime" -k
+2. DISK USAGE CHECK
+ ansible all -m shell -a "df -h"
+3. Memory status check
+ansible all -m shell -a "free -h" -k
+
+4. make user
+ ansible all -m user -a "name=sysic password=jy2lee123" -k
+[can't login jy2lee123 passwod because not security)
+
+5.file send
+ ansible nginx -m copy -a "src=./test.file dest=/tmp/" -k
+
+6. Service  Install
+ansible nginx -m yum -a "name=httpd state=present" -k
+## ansible test
+1. uptime check
+ ansible all -m shell -a "uptime" -k
+2. DISK USAGE CHECK
+ ansible all -m shell -a "df -h"
+3. Memory status check
+ansible all -m shell -a "free -h" -k
+
+4. make user
+ ansible all -m user -a "name=sysic password=jy2lee123" -k
+[can't login jy2lee123 passwod because not security)
+
+5.file send
+ ansible nginx -m copy -a "src=./test.file dest=/tmp/" -k
+
+6. Service  Install
+ansible nginx -m yum -a "name=httpd state=present" -k
+
+
+## ansible test
+1. uptime check
+ ansible all -m shell -a "uptime" -k
+2. DISK USAGE CHECK
+ ansible all -m shell -a "df -h"
+3. Memory status check
+ansible all -m shell -a "free -h" -k
+
+4. make user
+ ansible all -m user -a "name=sysic password=jy2lee123" -k
+[can't login jy2lee123 passwod because not security)
+
+5.file send
+ ansible nginx -m copy -a "src=./test.file dest=/tmp/" -k
+
+6. Service  Install
+ansible nginx -m yum -a "name=httpd state=present" -k
+
+
+#Playbook
+if you have plan to play and service start for many servers by a file
+(1) install (2) file send (3) service restart => included ansible playbook
+
+# stop firewall
+ansile nginx -m shell -a "systemctl stop firewalld" -k
+
+#install nginx
+--
+- hosts: nginx
+  remote_user: root
+  tasks:
+  - name: install epel-release
+    yum: name=epel-release state=latest
+  - name: install nginx web server
+    yum: name=ngix state=present
+  - name: Start nginx web server
+    service: name=nginx state=started
+
+
+# when the error event showed .. you can see the easily 
+change /etc/ansible/ansible.cfg
+
+vi etc/ansible/ansible.cfg
+from #stdout_callback = skippy 
+to stdout_callback = debug
+
+
+
+#####################
+
+root@e63c6c731606 home]# ansible all -a "cat /etc/hosts"
+centos3 | UNREACHABLE! => {
+    "changed": false,
+    "msg": "Failed to connect to the host via ssh: Control socket connect(/root/.ansible/cp/6360373fbb): Connection refused\r\nFailed to connect to new control master\r\n",
+    "unreachable": true
+}
+centos2 | UNREACHABLE! => {
+
+==========> vim /etc/ansible/ansible.cfg
+[ssh_connection]
+ssh_args = -o ControlMaster=no
+
+
+## ansible-playbook
+become yes  is same    root_user: root

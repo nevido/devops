@@ -1,0 +1,31 @@
+- hosts: webservers
+  remote_user: root
+  tasks:
+    - name: install the apache web server
+      yum: name=httpd state=installed
+    - name: Ensoure that apahce is startd and enabled on system boot
+      service: name=httpd state=started enabled=yes
+    - name: INSTALL PHP 7 AND SOME REQUIRED PACKAGES
+      yum: name={{item}} state=present
+      with_items:
+        - mod_php
+        - php-cli
+        - php-common
+        - php-gd
+        - php-mcrypt
+        - php-xml
+        - unzip
+        - vim
+        - mariadb
+    - name: Download and extract the CodeIgniter arvhive to /var/www/html
+      unarchive:
+        src: https://github.com/bcit-ci/CodeIgniter/archive/3.1.5.zip
+        dest: /var/www/html
+        remote_src: yes
+    - name: Change the files ownership to be owned by vagrant
+      file:
+        path: /var/www/html
+        owner: vagrant
+        group: vagrant
+        recurse: yes
+

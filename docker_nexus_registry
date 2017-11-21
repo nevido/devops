@@ -1,0 +1,10 @@
+The OS is Ubuntu 14.04 (Image)
+
+mkdir /RESOURCE/nexus-data && chown -R 200/RESOURCE/nexus-data
+
+docker run -d -p 8081:8081 -p 12000:12000 --name nexus-repo -v /RESOURCE/nexus-data:/nexus-data sonatype/nexus3
+
+
+default id/pw  admin/admin123
+
+

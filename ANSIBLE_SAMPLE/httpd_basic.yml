@@ -1,0 +1,10 @@
+- hosts: webservers
+  remote_user: root
+  tasks:
+    - name: install the apache web server
+      yum: name=httpd state=installed
+    - name: Ensoure that apahce is startd and enabled on system boot
+      service: name=httpd state=started enabled=yes
+
+
+

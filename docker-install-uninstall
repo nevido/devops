@@ -1,0 +1,41 @@
+
+
+CENTOS
+
+uname -r
+
+-yum packages update exec
+$yum update
+
+
+-docker yum repo 
+$vi /etc/yum.repos.d/docker.repo
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+
+
+
+-Docker package install
+$yum install docker-engine
+
+
+-Docker daemon start
+$systemctl start docker
+$systemctl enable docker.service
+
+
+-Docker delete
+$yum list installed |grepdocker
+
+$yum -y remove dockerpackagename
+
+- You want to delete all files about docker(such as images, containers and etc)
+$rm -rf /var/lib/docker
+
+
+
+ 
