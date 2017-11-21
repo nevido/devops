@@ -1,0 +1,19 @@
+echo "# SWIFT" >> README.md
+git init
+git add README.md  or git add *
+git commit -m "DOCKER DOC"
+
+git config --global usr.email "test@test.com"
+git config --global user.name "JaeYong Lee"
+git remote add origin https://github.com/your_id/gitproject.git
+
+git push -u origin master
+
+
+
+######## delete ############
+git rm -r --cacahed  want_to_Delete file_or directory
+git commit -m "delete file and directory and etc explain"
+git push origin master
+
+
