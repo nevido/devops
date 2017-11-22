@@ -1,0 +1,9 @@
+Pckage docker-engine is obsoleted by docker-ce ...
+you want to install docker-ce-17.03 via yum install
+but only installed docker-ce-17.03.3 or laster version
+then change option like this
+
+
+$ yum install -y --setopt=obsoletes=0 
+docker-ce-17.03.0.ce-1.el7.centos 
+docker-ce-selinux-17.03.0.ce-1.el7.centos
