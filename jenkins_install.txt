@@ -1,0 +1,33 @@
+jenkins
+
+wget http://ftp-nyc.osuosl.org/pub/jenkins/war/latest/jenkins.war
+
+[tomcat install]
+ yum install tomcat-admin-webapps.noarch tomcat-docs-webapp.noarch tomcat-javadoc.noarch tomcat-systemv.noarch tomcat-webapps.noarch
+
+
+and copy jenkins.war to container's tomcat webapps directory (ex:/opt/tomcat/webapps)
+
+
+web.. 
+http://tomcat ip:8080/jenkins/
+
+next  you can see like the this message on the web
+cat /usr/share/tomcat/.jenkins/secrets/initialAdminPassword
+
+
+you have to exec this command on the server(not web)
+and insert key into the web 
+
+
+
+
+or 
+
+docker pull jenkins
+
+docker run -d -p 8080:8080 -p 80:80 -v $PWD:/var/jenkins_home --name jenekins  jenkins
+http://ip:8080
+
+others is same
+
