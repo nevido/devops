@@ -12,7 +12,7 @@ import dns.query
 # Constants
 MAX_SERVER_COUNT = 3
 SPARTANS = ['198.51.100.1', '198.51.100.2']
-#SPARTANS = ['198.51.100.1', '198.51.100.2', '10.156.25.61']
+#SPARTANS = ['198.51.100.1', '198.51.100.2', '198.51.100.3']
 
 
 if len(sys.argv) != 2:
