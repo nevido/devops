@@ -1,0 +1,60 @@
+(1) Clone the Universe repository
+
+git clone https://github.com/mesosphere/universe.git --branch version-3.x
+
+(2) Build the unverse-base image
+
+cd universe/docker/local-universe/
+sudo make base
+
+(3)Build the mesosphere/universe Docker image and compress it to the local-universe.tar.gz file. Specify a comma-separated list of package names and versions using the DCOS_PACKAGE_INCLUDE variable. To minimize the container size and download time, you can select only what you need. If you do not use the DCOS_PACKAGE_INCLUDE variable, all Certified Universe packages are included. To view which packages are Certified, click the Catalog tab in the DC/OS web interface.
+
+
+sudo make DCOS_VERSION=1.10 DCOS_PACKAGE_INCLUDE="cassandra:1.0.25-3.0.10,marathon:1.4.2" local-universe
+
+(4) Perform all of the steps as described in Deploying a local Universe containing Certified Universe packages, except step 27. Replace the command in step 27 with the following.
+
+dcos package repo add local-universe http://master.mesos:8082/repo
+
+
+
+
+--------------------- real process ----------------------
+----------------Very Important -------------------------
+
+
+
+Fork this repo and clone the fork:
+git clone https://github.com/<user>/universe.git /path/to/universe
+
+scripts/build.sh
+
+DOCKER_TAG="my-package" docker/server/build.bash
+
+This will create a Docker image universe-server:my-package and docker/server/target/marathon.json on your local machine
+
+If you would like to publish the built Docker image, run
+
+DOCKER_TAG="my-package" docker/server/build.bash publis
+
+
+Run Universe Server
+
+Using the marathon.json that is created when building Universe Server we can run a Universe Server in our DC/OS Cluster which can then be used to install packages.
+
+Run the following commands to configure DC/OS to use the custom Universe Server (DC/OS 1.8+
+
+
+
+dcos marathon app add marathon.json
+
+** maybe you have to copy marathon.json  from .. made marathon.json
+
+/OS 1.7, a different URL must be used:
+
+dcos marathon app add marathon.json
+dcos package repo add --index=0 dev-universe http://universe.marathon.mesos:8085/repo-1.7
+
+
+
+dcos package repo add --index=0 dev-universe http://universe.marathon.mesos:8085/repo
