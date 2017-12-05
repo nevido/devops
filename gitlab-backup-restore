@@ -1,0 +1,50 @@
+
+gitlab backup
+
+check
+
+cd /etc/gitlab
+
+vi gitlab.rb 
+and check backup-path
+
+
+
+gitabl-rake gitlab:backup:create
+
+check the backup file path
+ls /var/opt/gitlab/backups
+
+crontab -e -u root
+0 3 * * * gitlab-rake gitlab:backup:create
+
+
+Summary
+GitLab Backup and Restore: https://docs.gitlab.com/ce/raketasks/README.html
+
+A simple script to backup your Gitlab data https://github.com/sund/auto-gitlab-backup
+
+ This script will copy the backup archives of your gitlab installation via rsync, or scp. 
+
+
+
+ -------------gitlab restore ----------------------
+
+in gitalb server
+
+gitlab-ctl stop unicorn
+gitlab-ctl stop sidekiq
+
+gitlab-ctl status
+
+if backup file name is 1512440128_2017_12_05_gitlab_backup.tar
+
+gitlab-rake gitlab:backup:restore 1512440128_2017_12_05
+
+y
+yes
+yes
+
+gitlab-ctl restart
+
+wait a few minutes
